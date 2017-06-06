@@ -4,6 +4,9 @@ function initMap() {
     center: {lat: 7.321, lng: 20.123},
     zoom: 4
   });
+
+//   new Feed('feeds/moviemaps.json');
+  new Feed('feeds/walks.json');
 }
 
 /**
@@ -14,6 +17,9 @@ var Feed = function(url) {
   this.posts = [];
 
   this.getJsonFromUri(url, response => {
+    if (!response || !('items' in response)) {
+      return
+    }
     this.posts = response['items'];
     let fragment = document.createDocumentFragment();
     for (let i = 0; i < this.posts.length; i++) {
@@ -93,4 +99,38 @@ Feed.prototype.showItem = function(item, event) {
     item.__data.addGeoJson(item._geo);
   }
   this.current_data = item.__data;
+
+  let bounds = this.expandBounds(item._geo, new google.maps.LatLngBounds());
+  map.fitBounds(bounds);
+  if (map.getZoom() > 15) {
+    map.setZoom(15);
+  }
+};
+
+/**
+ * Extends a Google Maps LatLng Bounds to include the provided GeoJSON object.
+ */
+Feed.prototype.expandBounds = function(object, bounds) {
+  if (object.type == 'FeatureCollection') {
+    if (!('features' in object)) {
+      return bounds
+    }
+    for (feature of object.features) {
+      this.expandBounds(feature, bounds);
+    }
+  } else {
+    if (!('geometry' in object) ||
+        !('coordinates' in object.geometry)) {
+      return bounds
+    }
+    let coord = object.geometry.coordinates;
+    if (Array.isArray(coord[0])) {
+      for (pair of coord) {
+        bounds.extend(new google.maps.LatLng(pair[1], pair[0]));
+      }
+    } else {
+      bounds.extend(new google.maps.LatLng(coord[1], coord[0]));
+    }
+  }
+  return bounds
 };
