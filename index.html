@@ -5,13 +5,30 @@
   <title>GeoJSON Feed Reader</title>
 
   <script type="text/javascript" src="script.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
-<h1>GeoJSON Feed Reader</h1>
+<header>
+  <h1>GeoJSON Feed Reader</h1>
+</header>
 
-<section id="posts"></section>
+<main>
+  <nav>
+    <template>
+      <article><h4></h4><article>
+    </template>
+  </nav>
 
+  <section id="post">
+    <figure id="map"></figure>
+    <h3></h3>
+    <p></p>
+  </section>
+</main>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=[API KEY]&callback=initMap" async defer></script>
 <script type="text/javascript">
   new Feed('http://192.168.99.100:32768/feed.json');
 </script>
