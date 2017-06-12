@@ -5,8 +5,8 @@ function initMap() {
     zoom: 4
   });
 
-//   new Feed('feeds/moviemaps.json');
-  new Feed('feeds/walks.json');
+//  new Feed('feeds/walks.json');
+new Feed('https://moviemaps.org/feed.json');
 }
 
 /**
